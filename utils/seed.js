@@ -1,11 +1,21 @@
+const mongoose = require('mongoose');
 const connection = require('../config/connection');
 const { Course, Student } = require('../models');
 const { getRandomName, getRandomAssignments } = require('./data');
 
-connection.on('error', (err) => err);
+// Establish a connection to the MongoDB database
+mongoose.connect(connection);
 
-connection.once('open', async () => {
-  console.log('connected');
+// Get the default connection
+const db = mongoose.connection;
+
+// Bind event handlers to the Mongoose connection
+db.on('error', (err) => {
+  console.error('MongoDB connection error:', err);
+});
+
+db.once('open', async () => {
+  console.log('Connected to MongoDB');
     // Delete the collections if they exist
     let courseCheck = await connection.db.listCollections({ name: 'courses' }).toArray();
     if (courseCheck.length) {
@@ -52,5 +62,8 @@ connection.once('open', async () => {
   // Log out the seed data to indicate what should appear in the database
   console.table(students);
   console.info('Seeding complete! 🌱');
-  process.exit(0);
+  db.close(() => {
+    console.info('Database connection closed');
+    process.exit(0);
+  });
 });
