@@ -1,12 +1,9 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config(); // Invoke the config method to load environment variables
 
-const uri = process.env.MONGODB_URI;
+const connectionString = process.env.MONGODB_URI;
 
-// Establish a connection to the MongoDB database
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(connectionString);
 
 module.exports = mongoose.connection;

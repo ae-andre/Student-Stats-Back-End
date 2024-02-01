@@ -1,6 +1,10 @@
 const express = require('express');
 const db = require('./config/connection');
 const routes = require('./routes');
+const dotenv = require("dotenv");
+const mongoose = require("mongoose");
+
+dotenv.config();
 
 const cwd = process.cwd();
 
@@ -16,7 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(routes);
 
-db.once('open', () => {
+// Use the 'db' connection object to listen to the 'open' event
+mongoose.connection.once('open', () => {
   app.listen(PORT, () => {
     console.log(`API server for ${activity} running on port ${PORT}!`);
   });

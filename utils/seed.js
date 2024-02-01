@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
-const connection = require('../config/connection');
+const connection = require('../config/connection.js');
 const { Course, Student } = require('../models');
 const { getRandomName, getRandomAssignments } = require('./data');
+const dotenv = require('dotenv');
+dotenv.config()
+const connectionString = process.env.MONGODB_URI;
 
 // Establish a connection to the MongoDB database
-mongoose.connect(connection);
+mongoose.connect(connectionString);;
 
 // Get the default connection
 const db = mongoose.connection;
@@ -16,17 +19,10 @@ db.on('error', (err) => {
 
 db.once('open', async () => {
   console.log('Connected to MongoDB');
-    // Delete the collections if they exist
-    let courseCheck = await connection.db.listCollections({ name: 'courses' }).toArray();
-    if (courseCheck.length) {
-      await connection.dropCollection('courses');
-    }
-
-    let studentsCheck = await connection.db.listCollections({ name: 'students' }).toArray();
-    if (studentsCheck.length) {
-      await connection.dropCollection('students');
-    }
-
+  
+  // Delete the collections if they exist
+  await db.collection('courses').drop();
+  await db.collection('students').drop();
 
   // Create empty array to hold the students
   const students = [];
@@ -62,8 +58,6 @@ db.once('open', async () => {
   // Log out the seed data to indicate what should appear in the database
   console.table(students);
   console.info('Seeding complete! 🌱');
-  db.close(() => {
-    console.info('Database connection closed');
-    process.exit(0);
-  });
+  
+  await db.close()
 });
