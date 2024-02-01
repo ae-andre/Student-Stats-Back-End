@@ -4,6 +4,7 @@ const {
   getSingleStudent,
   createStudent,
   deleteStudent,
+  updateStudent,
   addAssignment,
   removeAssignment,
 } = require('../../controllers/studentController');
@@ -12,7 +13,7 @@ const {
 router.route('/').get(getStudents).post(createStudent);
 
 // /api/students/:studentId
-router.route('/:studentId').get(getSingleStudent).delete(deleteStudent);
+router.route('/:studentId').get(getSingleStudent).put(updateStudent).delete(deleteStudent);
 
 // /api/students/:studentId/assignments
 router.route('/:studentId/assignments').post(addAssignment);

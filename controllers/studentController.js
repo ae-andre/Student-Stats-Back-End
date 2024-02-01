@@ -83,6 +83,25 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+
+  async updateStudent(req, res) {
+      try {
+        const studentId = req.params.studentId; // Extract studentId from request parameters
+        const updatedStudent = req.body; // Updated student data
+    
+        // Update the student using findByIdAndUpdate
+        const result = await Student.findByIdAndUpdate(studentId, updatedStudent, { new: true });
+    
+        if (!result) {
+          return res.status(404).json({ message: 'Student not found' });
+        }
+    
+        res.status(200).json(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+      }
+    },
   // Delete a student and remove them from the course
   async deleteStudent(req, res) {
     try {
